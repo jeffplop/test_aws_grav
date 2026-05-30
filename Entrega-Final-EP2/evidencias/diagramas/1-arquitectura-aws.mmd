@@ -1,0 +1,23 @@
+graph TD
+    subgraph AWS VPC
+        subgraph Public Subnet
+            IGW[Internet Gateway]
+            Usuario((Usuario / Cliente)) -->|HTTP:80| IGW
+            IGW --> Frontend[EC2 - Frontend<br/>Nginx unprivileged<br/>Port: 8080->80]
+        end
+        subgraph Private Subnet / App Tier
+            Frontend -->|REST API:3001| Backend[EC2 - Backend<br/>NodeJS Express<br/>Port: 3001]
+            Backend -->|TCP:3306| DB[(EC2 - Database<br/>MySQL 8.0<br/>Port: 3306)]
+            
+            subgraph Security Groups
+                SG_Front[SG Frontend - In: 80]
+                SG_Back[SG Backend - In: 3001 from SG_Front]
+                SG_DB[SG DB - In: 3306 from SG_Back]
+            end
+        end
+    end
+    
+    style IGW fill:#f96,stroke:#333,stroke-width:2px
+    style Frontend fill:#85C1E9,stroke:#333
+    style Backend fill:#82E0AA,stroke:#333
+    style DB fill:#F5B041,stroke:#333

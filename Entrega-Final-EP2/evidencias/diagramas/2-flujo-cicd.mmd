@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant Dev as Desarrollador
+    participant GitHub as GitHub Repository
+    participant Actions as GitHub Actions
+    participant ECR as Amazon ECR
+    participant EC2 as Amazon EC2 (SSM)
+
+    Dev->>GitHub: git push origin deploy
+    GitHub->>Actions: Trigger workflow on 'deploy' branch
+    
+    rect rgb(200, 220, 240)
+        Note over Actions: Fase de Build
+        Actions->>Actions: Checkout source code
+        Actions->>Actions: Configure AWS Credentials
+        Actions->>Actions: docker build (Multi-stage)
+        Actions->>Actions: docker tag latest & v1
+    end
+    
+    rect rgb(220, 240, 200)
+        Note over Actions,ECR: Fase de Push
+        Actions->>ECR: Login to Amazon ECR
+        Actions->>ECR: docker push image:latest
+    end
+    
+    rect rgb(240, 220, 200)
+        Note over Actions,EC2: Fase de Despliegue (CD)
+        Actions->>EC2: aws ssm send-command
+        EC2->>ECR: docker pull new image
+        EC2->>EC2: docker stop & rm old container
+        EC2->>EC2: docker run --network app-network
+    end
+    
+    EC2-->>Dev: Aplicación Actualizada Disponible

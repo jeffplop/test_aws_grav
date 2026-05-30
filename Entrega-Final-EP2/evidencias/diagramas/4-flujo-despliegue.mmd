@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> GitPush: Developer pushes to 'deploy'
+    GitPush --> ActionTriggered: GitHub Actions
+    
+    state ActionTriggered {
+        [*] --> Checkout
+        Checkout --> LoginAWS
+        LoginAWS --> BuildDocker
+        BuildDocker --> PushECR
+        PushECR --> DeploySSM
+        DeploySSM --> [*]
+    }
+    
+    ActionTriggered --> EC2_State: aws ssm
+    
+    state EC2_State {
+        [*] --> PullImage
+        PullImage --> StopOld
+        StopOld --> CreateNetwork
+        CreateNetwork --> RunNew
+        RunNew --> [*]
+    }
+    
+    EC2_State --> Success
+    Success --> [*]

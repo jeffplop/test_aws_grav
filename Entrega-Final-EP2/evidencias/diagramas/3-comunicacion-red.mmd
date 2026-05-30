@@ -1,0 +1,13 @@
+graph LR
+    subgraph Docker Bridge Network [app-network]
+        Front[tienda-frontend<br/>80:8080]
+        Back[tienda-backend<br/>3001:3001]
+        DB[(tienda-db<br/>3306:3306)]
+        
+        Front -- "Proxy Pass (/api/*)<br/>BACKEND_HOST=backend" --> Back
+        Back -- "MySQL Driver<br/>DB_HOST=db" --> DB
+    end
+    
+    style Front fill:#D4E6F1,stroke:#2874A6
+    style Back fill:#D5F5E3,stroke:#239B56
+    style DB fill:#FCF3CF,stroke:#B7950B
