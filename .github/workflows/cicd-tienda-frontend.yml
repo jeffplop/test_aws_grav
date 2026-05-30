@@ -44,6 +44,7 @@ jobs:
             "cd /home/ubuntu/tienda-perritos_Docker_y_Workflow_GITHUB",
             "git pull origin deploy",
             "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
+            "export FRONTEND_IMAGE=${{ secrets.ECR_REPO_URL_FRONTEND }}:latest",
             "docker compose pull frontend",
             "docker compose up -d frontend"
           ]}' \
