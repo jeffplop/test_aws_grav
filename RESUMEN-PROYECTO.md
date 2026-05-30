@@ -4,16 +4,16 @@ Este documento relata todo el trabajo de Arquitectura, Contenerización y Automa
 
 ## 1. Reingeniería de Contenedores (Docker)
 El primer paso fue asegurar la aplicación. Se tomaron los Dockerfiles originales y se elevaron a estándares empresariales:
-- **Frontend**: Se migró de una imagen estándar de Nginx a `nginxinc/nginx-unprivileged:alpine`. Esto evita correr el servidor web como administrador (root), exponiendo en su lugar el puerto 8080. Además, se implementó inyección de variables de entorno mediante un `template` de nginx para que el frontend pueda encontrar dinámicamente al backend sin hardcodear IPs.
-- **Backend**: Se implementó un modelo **Multi-stage build** en Node.js. En la primera fase (builder) se descargan las librerías, y en la segunda se empaqueta la aplicación de manera liviana usando `node:18-alpine` y corriendo exclusivamente con el usuario sin privilegios `node`.
-- **Database**: Se usó MySQL 8.0 Oficial.
-- **Healthchecks**: A los tres servicios se les inyectó directivas `HEALTHCHECK` (curl al front, `/api/health` al back, `mysqladmin ping` a la DB) para garantizar resiliencia.
+- **Frontend (React Vite)**: Se compila usando Node 18 en la primera etapa, y luego se sirve con `nginxinc/nginx-unprivileged:alpine`. Esto evita correr el servidor web como administrador (root), exponiendo en su lugar el puerto 8080. Además, se implementó inyección de configuración mediante un `template` de nginx para enrutar internamente las peticiones hacia `/api/ventas` y `/api/despachos`.
+- **Backend (Microservicios Spring Boot)**: Se eliminó el monolito en Node.js y se implementaron dos microservicios independientes (Ventas y Despachos). El modelo **Multi-stage build** usa Maven para empaquetar el código, y en la segunda fase se despliega el `.jar` usando `eclipse-temurin:17-jre-alpine` ejecutándose con el usuario sin privilegios `spring`.
+- **Database**: Se usó MySQL 8.0 Oficial con un script de inicialización automática en `init.sql`.
+- **Healthchecks**: A los cuatro servicios se les integró Healthchecks para garantizar la resiliencia en la inicialización (el Nginx y MySQL se monitorean automáticamente, los de Java exponen puertos HTTP seguros).
 
 ## 2. Orquestación Local (Docker Compose)
 Se construyó un `docker-compose.yml` maestro que:
-- Levanta los tres servicios en una red puente privada (`app-network`).
-- Establece dependencias seguras (`condition: service_healthy`), obligando a que el backend no inicie hasta que la Base de Datos esté completamente lista.
-- Implementa **Persistencia de Datos** a través del Named Volume `db_data:/var/lib/mysql`, lo que significa que el catálogo de productos no se borra ni aunque el contenedor sea destruido.
+- Levanta los cuatro servicios en una red puente privada (`app-network`).
+- Establece dependencias seguras (`condition: service_healthy`), obligando a que los backends de Java no inicien hasta que la Base de Datos esté lista.
+- Implementa **Persistencia de Datos** a través del Named Volume `tienda_db_data:/var/lib/mysql`, lo que significa que la información transaccional sobrevive a los despliegues.
 
 ## 3. Arquitectura Cloud (AWS)
 La infraestructura se movió hacia **Amazon Web Services** (us-east-1):
