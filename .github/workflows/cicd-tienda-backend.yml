@@ -48,6 +48,7 @@ jobs:
             "docker pull ${{ secrets.ECR_REPO_URL_BACKEND }}:latest",
             "docker stop tienda-backend || true",
             "docker rm tienda-backend || true",
-            "docker run -d --name tienda-backend -p 3001:3001 -e DB_HOST=10.0.2.134 -e DB_USER=root -e DB_PASSWORD=admin123 -e DB_NAME=tienda_perritos ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
+            "docker network create tienda-network || true",
+            "docker run -d --name tienda-backend --network tienda-network -p 3001:3001 -e DB_HOST=tienda-db -e DB_USER=root -e DB_PASSWORD=admin123 -e DB_NAME=tienda_perritos ${{ secrets.ECR_REPO_URL_BACKEND }}:latest"
           ]}' \
           --output text

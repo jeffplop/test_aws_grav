@@ -48,6 +48,7 @@ jobs:
             "docker pull ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest",
             "docker stop tienda-frontend || true",
             "docker rm tienda-frontend || true",
-            "docker run -d --name tienda-frontend -p 80:8080 -e BACKEND_HOST=10.0.2.24 -e BACKEND_PORT=3001 ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"
+            "docker network create tienda-network || true",
+            "docker run -d --name tienda-frontend --network tienda-network -p 80:8080 -e BACKEND_HOST=tienda-backend -e BACKEND_PORT=3001 ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"
           ]}' \
           --output text
