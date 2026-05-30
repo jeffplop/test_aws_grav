@@ -41,8 +41,9 @@ jobs:
           --comment "Actualizar backend-ventas desde ECR" \
           --parameters '{"commands":[
             "set -e",
-            "cd /home/ubuntu/tienda-perritos_Docker_y_Workflow_GITHUB",
-            "git pull origin deploy",
+            "mkdir -p /home/ubuntu/app",
+            "cd /home/ubuntu/app",
+            "curl -H 'Cache-Control: no-cache, no-store' -o docker-compose.yml https://raw.githubusercontent.com/jeffplop/test_aws_grav/deploy/docker-compose.yml",
             "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
             "export VENTAS_IMAGE=${{ secrets.ECR_REPO_URL_BACKEND }}:ventas-latest",
             "docker compose pull backend-ventas",
