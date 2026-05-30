@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:8.0
+    image: ${DB_IMAGE:-tienda_db:latest}
+    build:
+      context: ./db
     container_name: tienda_db
     restart: unless-stopped
     environment:

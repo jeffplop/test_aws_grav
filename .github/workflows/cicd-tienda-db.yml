@@ -44,11 +44,11 @@ jobs:
           --comment "Actualizar tienda-db desde ECR" \
           --parameters '{"commands":[
             "set -e",
+            "cd /home/ubuntu/tienda-perritos_Docker_y_Workflow_GITHUB",
+            "git pull origin deploy",
             "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
-            "docker pull ${{ secrets.ECR_REPO_URL_DB }}:latest",
-            "docker stop tienda-db || true",
-            "docker rm tienda-db || true",
-            "docker network create tienda-network || true",
-            "docker run -d --name tienda-db --network tienda-network -p 3306:3306 -v db_data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=admin123 -e MYSQL_DATABASE=tienda_perritos -e MYSQL_USER=alumno -e MYSQL_PASSWORD=alumno123 ${{ secrets.ECR_REPO_URL_DB }}:latest"
+            "export DB_IMAGE=${{ secrets.ECR_REPO_URL_DB }}:latest",
+            "docker compose pull db",
+            "docker compose up -d db"
           ]}' \
           --output text
