@@ -1,0 +1,17 @@
+{
+    "InstanceIds": ["i-02b10fe2f2eaed832"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "echo '--- DOCKER PS ---'",
+            "docker ps",
+            "echo '--- DOCKER IMAGES ---'",
+            "docker images",
+            "echo '--- DOCKER COMPOSE LOGS ---'",
+            "cd /home/ubuntu/tienda",
+            "docker-compose logs --tail=20",
+            "echo '--- DOCKER VOLUME LIST ---'",
+            "docker volume ls"
+        ]
+    }
+}

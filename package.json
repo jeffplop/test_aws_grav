@@ -1,0 +1,20 @@
+{
+  "name": "2.5.3-app-tienda-perritos_docker_y_workflow_github",
+  "version": "1.0.0",
+  "description": "Este repositorio contiene la arquitectura de microservicios para la **Tienda de Perritos**, optimizada con las mejores prácticas de DevOps, incluyendo contenerización avanzada, flujos de CI/CD, y estrategias de despliegue en AWS EC2.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffplop/test_aws_grav.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffplop/test_aws_grav/issues"
+  },
+  "homepage": "https://github.com/jeffplop/test_aws_grav#readme"
+}

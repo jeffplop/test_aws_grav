@@ -1,0 +1,9 @@
+{
+    "InstanceIds": ["i-02b10fe2f2eaed832"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "docker-compose version || docker compose version"
+        ]
+    }
+}

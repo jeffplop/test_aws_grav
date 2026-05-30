@@ -1,0 +1,12 @@
+{
+    "InstanceIds": ["i-02b10fe2f2eaed832"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "docker rm -f tienda-frontend tienda-backend tienda-db || true",
+            "docker network rm tienda_app-network || true",
+            "cd /home/ubuntu/tienda",
+            "docker-compose up -d --build"
+        ]
+    }
+}

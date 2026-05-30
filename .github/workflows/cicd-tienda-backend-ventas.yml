@@ -1,14 +1,14 @@
-name: CI/CD Tienda Perritos - Frontend
+name: CI/CD Tienda Perritos - Backend Ventas
 
 on:
   push:
     branches: [ "deploy" ]
     paths:
-      - "frontend/**"
-      - ".github/workflows/cicd-tienda-frontend.yml"
+      - "backend-ventas/**"
+      - ".github/workflows/cicd-tienda-backend-ventas.yml"
 
 jobs:
-  build-push-deploy-frontend:
+  build-push-deploy-backend-ventas:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,25 +26,25 @@ jobs:
     - name: Login en Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build imagen Frontend y push a ECR
+    - name: Build imagen Backend Ventas y push a ECR
       run: |
-        cd frontend
-        docker build -t tienda-frontend .
-        docker tag tienda-frontend:latest ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest
-        docker push ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest
+        cd backend-ventas
+        docker build -t backend-ventas .
+        docker tag backend-ventas:latest ${{ secrets.ECR_REPO_URL_BACKEND }}:ventas-latest
+        docker push ${{ secrets.ECR_REPO_URL_BACKEND }}:ventas-latest
 
-    - name: Desplegar Frontend vía SSM (Docker Compose)
+    - name: Desplegar Backend Ventas vía SSM (Docker Compose)
       run: |
         aws ssm send-command \
-          --instance-ids ${{ secrets.EC2_FRONTEND_INSTANCE_ID }} \
+          --instance-ids ${{ secrets.EC2_BACKEND_INSTANCE_ID }} \
           --document-name "AWS-RunShellScript" \
-          --comment "Actualizar tienda-frontend desde ECR" \
+          --comment "Actualizar backend-ventas desde ECR" \
           --parameters '{"commands":[
             "set -e",
             "cd /home/ubuntu/tienda-perritos_Docker_y_Workflow_GITHUB",
             "git pull origin deploy",
             "aws ecr get-login-password --region '${{ secrets.AWS_REGION }}' | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
-            "docker compose pull frontend",
-            "docker compose up -d frontend"
+            "docker compose pull backend-ventas",
+            "docker compose up -d backend-ventas"
           ]}' \
           --output text
