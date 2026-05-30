@@ -14,11 +14,12 @@ stateDiagram-v2
     ActionTriggered --> EC2_State: aws ssm
     
     state EC2_State {
-        [*] --> PullImage
-        PullImage --> StopOld
-        StopOld --> CreateNetwork
-        CreateNetwork --> RunNew
-        RunNew --> [*]
+        [*] --> GitPull
+        GitPull --> DockerLogin
+        DockerLogin --> ExportEnvVars
+        ExportEnvVars --> ComposePull
+        ComposePull --> ComposeUp
+        ComposeUp --> [*]
     }
     
     EC2_State --> Success

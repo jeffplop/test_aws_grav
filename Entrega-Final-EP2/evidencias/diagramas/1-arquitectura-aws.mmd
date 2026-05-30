@@ -3,15 +3,17 @@ graph TD
         subgraph Public Subnet
             IGW[Internet Gateway]
             Usuario((Usuario / Cliente)) -->|HTTP:80| IGW
-            IGW --> Frontend[EC2 - Frontend<br/>Nginx unprivileged<br/>Port: 8080->80]
+            IGW --> Frontend[EC2 - Frontend<br/>React Vite & Nginx<br/>Port: 8080->80]
         end
         subgraph Private Subnet / App Tier
-            Frontend -->|REST API:3001| Backend[EC2 - Backend<br/>NodeJS Express<br/>Port: 3001]
-            Backend -->|TCP:3306| DB[(EC2 - Database<br/>MySQL 8.0<br/>Port: 3306)]
+            Frontend -->|REST API:8080| Ventas[EC2 - Backend Ventas<br/>Spring Boot<br/>Port: 8080]
+            Frontend -->|REST API:8081| Despachos[EC2 - Backend Despachos<br/>Spring Boot<br/>Port: 8081]
+            Ventas -->|TCP:3306| DB[(EC2 - Database<br/>MySQL 8.0<br/>Port: 3306)]
+            Despachos -->|TCP:3306| DB
             
             subgraph Security Groups
                 SG_Front[SG Frontend - In: 80]
-                SG_Back[SG Backend - In: 3001 from SG_Front]
+                SG_Back[SG Backend - In: 8080, 8081 from SG_Front]
                 SG_DB[SG DB - In: 3306 from SG_Back]
             end
         end
@@ -19,5 +21,6 @@ graph TD
     
     style IGW fill:#f96,stroke:#333,stroke-width:2px
     style Frontend fill:#85C1E9,stroke:#333
-    style Backend fill:#82E0AA,stroke:#333
+    style Ventas fill:#82E0AA,stroke:#333
+    style Despachos fill:#82E0AA,stroke:#333
     style DB fill:#F5B041,stroke:#333
