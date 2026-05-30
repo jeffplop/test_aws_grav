@@ -2,7 +2,7 @@
 **Evaluación Parcial N°2 - Proyecto Semestral DevOps**
 
 ## Introducción al Caso
-La empresa **Innovatech Chile** requiere pasar a la Etapa 2 de su proyecto, solicitando el despliegue de la aplicación "Tienda Perritos" en infraestructura AWS utilizando prácticas modernas de DevOps: Contenerización avanzada, persistencia de datos y un pipeline CI/CD robusto con GitHub Actions.
+La empresa **Innovatech Chile** requiere pasar a la Etapa 2 de su proyecto, solicitando el despliegue de la aplicación "Sistema de Gestión de Despachos" en infraestructura AWS utilizando prácticas modernas de DevOps: Contenerización avanzada, persistencia de datos y un pipeline CI/CD robusto con GitHub Actions.
 
 A continuación, se documenta el cumplimiento técnico exhaustivo de los requerimientos de la pauta de evaluación.
 
@@ -16,7 +16,7 @@ Se diseñó una estrategia de contenedorización priorizando la seguridad y el r
   - El Frontend (React/Vite) se sirve usando la imagen `nginxinc/nginx-unprivileged:alpine`, corriendo en el puerto 8080. Si existiese una vulnerabilidad de día cero en Nginx, el atacante no tendría privilegios de `root` en el contenedor, protegiendo el entorno de host de EC2.
 
 ## 2. [IE2] Persistencia de Datos en los Servicios
-Se implementó persistencia de datos crítica para que el historial de la "Tienda Perritos" sobreviva a los reinicios y caídas.
+Se implementó persistencia de datos crítica para que el historial de la "Sistema de Gestión de Despachos" sobreviva a los reinicios y caídas.
 - **Implementación**: Se usó un volumen de tipo **Named Volume** (`db_data:/var/lib/mysql`) definido en el `docker-compose.yml`.
 - **Justificación de Elección**: Frente a un Bind Mount, el Named Volume es administrado íntegramente por Docker en una ruta segura del sistema de archivos de EC2 (`/var/lib/docker/volumes`). Esto garantiza que no haya problemas de permisos cruzados entre el Host (Ubuntu/Linux) y el contenedor de MySQL, asegurando una continuidad operativa impecable para Innovatech.
 
