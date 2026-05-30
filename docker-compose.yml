@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: tienda-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: tienda_perritos
+      MYSQL_USER: alumno
+      MYSQL_PASSWORD: alumno123
+    networks:
+      - app-network
+    volumes:
+      # Volumen persistente para la BD
+      - db_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tienda-backend
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db
+      DB_USER: root # O usar 'alumno' si la app estuviera configurada para no usar root. La app usa 'root' por defecto en server.js o DB_USER env
+      DB_PASSWORD: admin123
+      DB_NAME: tienda_perritos
+      DB_PORT: 3306
+      PORT: 3001
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tienda-frontend
+    ports:
+      - "80:8080" # Nginx-unprivileged usa 8080 internamente
+    environment:
+      BACKEND_HOST: backend
+      BACKEND_PORT: 3001
+    networks:
+      - app-network
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  # Named volume que sobrevive a reinicios/destrucción de contenedores
+  db_data:
